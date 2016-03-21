@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<boggle>
+
+  <!-- Duration of games in seconds.  Must be positive. -->
+  <duration>120</duration>
+
+  <!-- Location of dictionary file, relative to solution folder -->
+  <pathname>dictionary.txt</pathname>
+
+  <!-- Optional.  If present, the initial state of all boards.  Must
+       consist of exactly 16 letters.  Is case-insensitive.  Used
+       for debugging purposes. -->
+  <initial>ABEFOIXTRSATOCAN</initial>
+
+</boggle>
