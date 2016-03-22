@@ -57,8 +57,13 @@
     </p>
 
     <p>
+        The response status code 500 (InternalServerError) is used to report, among other things, unhandled exceptions in the
+        service.  Sometimes, trying the same service call again will succeed, depending on the nature of the error.
+    </p>
+
+    <p>
         The URLs given below are relative to 
-        <a href="http://bogglecs3500s16.azurewebsites.net/BoggleService.svc/">http://bogglecs3500s16.azurewebsites.net/BoggleService.svc/</a>.
+        <a href="http://bogglecs3500s16.azurewebsites.net">http://bogglecs3500s16.azurewebsites.net</a>.
     </p>
 
     <p>
@@ -141,7 +146,7 @@
     </p>
 
     <pre><span>
-    POST /users
+    POST /BoggleService.svc/users
     </span></pre>
 
     <h4>Input</h4>
@@ -157,7 +162,7 @@
     <h4>Example</h4>
 
     <pre><span>
-    POST /users
+    POST /BoggleService.svc/users
     {
         "Nickname": "Joe"
     }
@@ -201,7 +206,7 @@
     </p>
 
     <pre><span>
-    POST /games
+    POST /BoggleService.svc/games
     </span></pre>
 
     <h4>Input</h4>
@@ -218,7 +223,7 @@
     <h4>Example</h4>
 
     <pre><span>
-    POST /games
+    POST /BoggleService.svc/games
     {
         "UserToken": "9eb536af-50a1-476f-856e-ffff8f1b25d2",
         "TimeLimit": 25
@@ -230,7 +235,7 @@
     <pre><span>
     Status: 202 Accepted
     {
-        "GameID": "G128"
+        "GameID": "128"
     }
     </span></pre>
 
@@ -239,7 +244,7 @@
     <pre><span>
     Status: 201 Created
     {
-        "GameID": "G128"
+        "GameID": "128"
     }
     </span></pre>
 
@@ -262,7 +267,7 @@
     </p>
 
     <pre><span>
-    PUT /games
+    PUT /BoggleService.svc/games
     </span></pre>
 
     <h4>Input</h4>
@@ -278,7 +283,7 @@
     <h4>Example</h4>
 
     <pre><span>
-    PUT /games
+    PUT /BoggleService.svc/games
     {
         "UserToken": "9eb536af-50a1-476f-856e-ffff8f1b25d2"
     }
@@ -314,7 +319,7 @@
     </p>
 
     <pre><span>
-    PUT /games/:GameID
+    PUT /BoggleService.svc/games/:GameID
     </span></pre>
 
     <h4>Input</h4>
@@ -332,7 +337,7 @@
     <h4>Example</h4>
 
     <pre><span>
-    PUT /games/G128
+    PUT /BoggleService.svc/games/128
     {
         "UserToken": "9eb536af-50a1-476f-856e-ffff8f1b25d2",
         "Word": "triple"
@@ -367,7 +372,7 @@
     </p>
 
     <pre><span>
-    GET /games/:GameID
+    GET /BoggleService.svc/games/:GameID
     </span></pre>
 
     <h4>Parameters</h4>
@@ -383,7 +388,7 @@
     <h4>Example</h4>
 
     <pre><span>
-    GET /games/G128
+    GET /BoggleService.svc/games/128
     </span></pre>
 
     <h4>Response (if game is pending)</h4>

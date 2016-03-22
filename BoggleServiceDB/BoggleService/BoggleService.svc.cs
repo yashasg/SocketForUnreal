@@ -83,10 +83,11 @@ namespace Boggle
                     SetStatus(Created);
                     return new User() { UserToken = guid };
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
-                    throw e;
+                    SetStatus(InternalServerError);
+                    return null;
                 }
                 finally
                 {
@@ -180,10 +181,11 @@ namespace Boggle
                         return new Game() { GameID = command.ExecuteScalar().ToString() };
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
-                    throw e;
+                    SetStatus(InternalServerError);
+                    return null;
                 }
                 finally
                 {
@@ -222,10 +224,11 @@ namespace Boggle
                         SetStatus(OK);
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
-                    throw e;
+                    SetStatus(InternalServerError);
+                    return;
                 }
                 finally
                 {
@@ -259,7 +262,7 @@ namespace Boggle
                 try
                 {
                     // Get information about the game in which the word is to be played
-                    SqlCommand command = new SqlCommand("select GameID, Player1, Player2, Board, TimeLimit, StartTime from Games where GameID=@GameID and (Player1 = @Player or Player2 = @Player)", conn, trans);
+                    SqlCommand command = new SqlCommand("select GameID, Player1, Player2, Board, TimeLimit, StartTime from Games where GameID=@GameID and Player2 is not null and (Player1 = @Player or Player2 = @Player)", conn, trans);
                     command.Parameters.AddWithValue("@GameID", gameID);
                     command.Parameters.AddWithValue("@Player", data.UserToken);
 
@@ -320,10 +323,11 @@ namespace Boggle
                     SetStatus(OK);
                     return new WordScore() { Score = score };
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
-                    throw e;
+                    SetStatus(InternalServerError);
+                    return null;
                 }
                 finally
                 {
@@ -478,10 +482,11 @@ namespace Boggle
                     }
                     return status;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     trans.Rollback();
-                    throw e;
+                    SetStatus(InternalServerError);
+                    return null;
                 }
                 finally
                 {
