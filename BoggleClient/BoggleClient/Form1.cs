@@ -29,6 +29,7 @@ namespace BoggleClient
             ServerBox.Enabled = true;
             TimeBox.Enabled = false;
             WordBox.Enabled = false;
+            Waiting.Visible = false;
             PlayerBox.Focus();
         }
 
@@ -41,13 +42,16 @@ namespace BoggleClient
             ServerBox.Enabled = true;
             TimeBox.Enabled = true;
             WordBox.Enabled = false;
+            WordBox.Text = "";
+            Waiting.Visible = false;
+            JoinGameButton.Text = "Join Game";
             TimeBox.Focus();
         }
 
         private void JoiningState()
         {
             RegisterUserButton.Enabled = false;
-            JoinGameButton.Enabled = false;
+            JoinGameButton.Enabled = true;
             QuitGameButton.Enabled = false;
             PlayerBox.Enabled = false;
             ServerBox.Enabled = false;
@@ -92,8 +96,8 @@ namespace BoggleClient
                 {
                     for (int c = 0; c < 4; c++)
                     {
-                        string s = (board[4 * r + c] == 'Q') ? "QU" : board[4 * r + c].ToString();
-                        Grid.GetControlFromPosition(c, r).Text = board[r*4+c].ToString();
+                        string s = (board[4 * r + c] == 'Q') ? "Qu" : board[4 * r + c].ToString();
+                        Grid.GetControlFromPosition(c, r).Text = s;
                     }
                 }
                 Time.Text = result.TimeLeft;
@@ -103,6 +107,7 @@ namespace BoggleClient
                 Score2.Text = result.Player2.Score.ToString();
                 Words1.Text = "";
                 Words2.Text = "";
+                Waiting.Visible = false;
                 PlayingState();
             }
         }
@@ -170,9 +175,19 @@ namespace BoggleClient
                 return;
             }
 
+            if (PlayerBox.Text.Trim() == "")
+            {
+                MessageBox.Show("Error: No user name provided");
+                return;
+            }
+
+            Waiting.Visible = true;
+            RegisterUserButton.Text = "Cancel Register User";
             dynamic data = new ExpandoObject();
             data.Nickname = PlayerBox.Text;
             dynamic result = await client.DoPostAsync(data, "users");
+            RegisterUserButton.Text = "Register User";
+            Waiting.Visible = false;
             if (result is HttpStatusCode)
             {
                 MessageBox.Show("Error: " + result.ToString());
@@ -186,12 +201,23 @@ namespace BoggleClient
 
         private async void JoinGameButton_Click(object sender, EventArgs e)
         {
+            if (JoinGameButton.Text.StartsWith("Cancel"))
+            {
+                timer.Stop();
+                Waiting.Visible = false;
+                RegisteredState();
+                return;
+            }
+
+            Waiting.Visible = true;
+            JoinGameButton.Text = "Cancel Join Game";
             dynamic data = new ExpandoObject();
             data.UserToken = PlayerToken;
             data.TimeLimit = Int32.Parse(TimeBox.Text);
             dynamic result = await client.DoPostAsync(data, "games");
             if (result is HttpStatusCode)
             {
+                Waiting.Visible = false;
                 MessageBox.Show("Error: " + result.ToString());
             }
             else
@@ -216,6 +242,12 @@ namespace BoggleClient
                     MessageBox.Show("Error: " + result.ToString());
                 }
             }
+        }
+
+        private void QuitGameButton_Click(object sender, EventArgs e)
+        {
+            timer.Stop();
+            RegisteredState();
         }
     }
 }

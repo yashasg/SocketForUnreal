@@ -12,7 +12,7 @@ namespace BoggleClient
     {
         public RestClient (string domain)
         {
-            this.domain = new Uri("http://bogglecs3500s16.azurewebsites.net/");
+            this.domain = new Uri(domain);
         }
 
         private Uri domain;
@@ -63,7 +63,7 @@ namespace BoggleClient
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string result = response.Content.ReadAsStringAsync().Result;
+                    string result = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject(result);
                 }
                 else
@@ -82,7 +82,7 @@ namespace BoggleClient
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string result = response.Content.ReadAsStringAsync().Result;
+                    string result = await response.Content.ReadAsStringAsync();
                     return JsonConvert.DeserializeObject(result);
                 }
                 else
