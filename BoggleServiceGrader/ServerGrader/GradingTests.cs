@@ -24,8 +24,8 @@ namespace ServerGrader
         {
             // Create a client whose base address is the GitHub server
             HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("http://localhost:23056");
-            client.BaseAddress = new Uri("http://bogglecs3500s16.azurewebsites.net");
+            client.BaseAddress = new Uri("http://localhost:60000");
+            //client.BaseAddress = new Uri("http://bogglecs3500s16.azurewebsites.net");
             return client;
         }
 

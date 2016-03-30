@@ -18,12 +18,16 @@ namespace Boggle
         // The dictionary of legal words
         private static ISet<string> dictionary;
 
+        // The log file
+        private readonly static string logFile;
+
         /// <summary>
         /// Initialize the BoggleDB and dictionary
         /// </summary>
         static BoggleService()
         {
             BoggleDB = ConfigurationManager.ConnectionStrings["BoggleDB"].ConnectionString;
+            logFile = AppDomain.CurrentDomain.BaseDirectory + "LOG.txt";
             dictionary = new HashSet<string>();
             using (StreamReader words = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + @"dictionary.txt"))
             {
@@ -32,6 +36,30 @@ namespace Boggle
                 {
                     dictionary.Add(word.ToUpper());
                 }
+            }
+        }
+
+        // Writes to the log file
+        private static void WriteLog(Exception e)
+        {
+            try
+            {
+                lock(logFile)
+                {
+                    using (StreamWriter log = File.AppendText(logFile))
+                    {
+                        log.Write("Log Entry ");
+                        log.WriteLine("{0} {1}", DateTime.Now.ToLongTimeString(), DateTime.Now.ToLongDateString());
+                        log.WriteLine();
+                        log.WriteLine(e);
+                        log.WriteLine(e.StackTrace);
+                        log.WriteLine("--------------------------------------------------");
+                        log.WriteLine();
+                    }
+                }
+            }
+            catch (Exception)
+            {
             }
         }
 
@@ -83,15 +111,19 @@ namespace Boggle
                     SetStatus(Created);
                     return new User() { UserToken = guid };
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    WriteLog(e);
                     trans.Rollback();
                     SetStatus(InternalServerError);
                     return null;
                 }
                 finally
                 {
-                    trans.Commit();
+                    if (trans.Connection != null)
+                    {
+                        trans.Commit();
+                    }
                 }
             }
         }
@@ -189,7 +221,10 @@ namespace Boggle
                 }
                 finally
                 {
-                    trans.Commit();
+                    if (trans.Connection != null)
+                    {
+                        trans.Commit();
+                    }
                 }
             }
         }
@@ -232,7 +267,10 @@ namespace Boggle
                 }
                 finally
                 {
-                    trans.Commit();
+                    if (trans.Connection != null)
+                    {
+                        trans.Commit();
+                    }
                 }
             }
         }
@@ -331,7 +369,10 @@ namespace Boggle
                 }
                 finally
                 {
-                    trans.Commit();
+                    if (trans.Connection != null)
+                    {
+                        trans.Commit();
+                    }
                 }
             }
         }
@@ -490,7 +531,10 @@ namespace Boggle
                 }
                 finally
                 {
-                    trans.Commit();
+                    if (trans.Connection != null)
+                    {
+                        trans.Commit();
+                    }
                 }
             }
         }
