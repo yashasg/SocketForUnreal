@@ -27,6 +27,7 @@ namespace BoggleClient
             HttpClient client = new HttpClient();
             client.BaseAddress = domain;
             client.BaseAddress = new Uri("http://bogglecs3500s16.azurewebsites.net/");
+            //client.BaseAddress = new Uri("http://10.211.55.4:60000/");
 
             // There is more client configuration to do, depending on the request.
             return client;
