@@ -14,6 +14,14 @@ using System.Threading;
 
 namespace ServerGrader
 {
+    /// <summary>
+    /// NOTE:  The service must already be running elsewhere, such as in a separate Visual Studio
+    /// or on a remote server, before these tests are run.  When the tests are started, the pending
+    /// game should contain NO players.
+    /// 
+    /// For best results, run these tests against a server to which you have exlusive access.
+    /// Othewise, competing users may interfere with the tests.
+    /// </summary>
     [TestClass]
     public class GradingTests
     {
@@ -22,18 +30,23 @@ namespace ServerGrader
         /// </summary>
         private static HttpClient CreateClient()
         {
-            // Create a client whose base address is the GitHub server
             HttpClient client = new HttpClient();
             client.BaseAddress = new Uri("http://localhost:60000");
-            //client.BaseAddress = new Uri("http://bogglecs3500s16.azurewebsites.net");
+            //client.BaseAddress = new Uri("http://bogglecs3500s16db.azurewebsites.net");
             return client;
         }
 
+        /// <summary>
+        /// Helper for serializaing JSON.
+        /// </summary>
         private static StringContent Serialize(dynamic json)
         {
             return new StringContent(JsonConvert.SerializeObject(json), Encoding.UTF8, "application/json");
         }
 
+        /// <summary>
+        /// Given a board configuration, returns all the valid words.
+        /// </summary>
         private static IList<string> AllValidWords(string board)
         {
             ISet<string> dictionary = new HashSet<string>();
@@ -57,6 +70,9 @@ namespace ServerGrader
             return validWords;
         }
 
+        /// <summary>
+        /// Returns the score for a word.
+        /// </summary>
         private static int GetScore(string word)
         {
             switch (word.Length)
@@ -78,6 +94,10 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Makes a user and asserts that the resulting status code is equal to the
+        /// status parameter.  Returns a Task that will produce the new userID.
+        /// </summary>
         private async Task<string> MakeUser(String nickname, HttpStatusCode status)
         {
             dynamic name = new ExpandoObject();
@@ -101,6 +121,10 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Joins the game and asserts that the resulting status code is equal to the parameter status.
+        /// Returns a Task that will produce the new GameID.
+        /// </summary>
         private async Task<string> JoinGame(String player, int timeLimit, HttpStatusCode status)
         {
             dynamic user = new ExpandoObject();
@@ -125,6 +149,10 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Cancels the pending game and asserts that the resulting status code is
+        /// equal to the parameter status.
+        /// </summary>
         private async Task CancelGame(String player, HttpStatusCode status)
         {
             dynamic user = new ExpandoObject();
@@ -137,6 +165,11 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Gets the status for the specified game and value of brief.  Asserts that the resulting
+        /// status code is equal to the parameter status.  Returns a task that produces the object
+        /// returned by the service.
+        /// </summary>
         private async Task<dynamic> GetStatus(String game, string brief, HttpStatusCode status)
         {
             using (HttpClient client = CreateClient())
@@ -155,6 +188,10 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Plays a word and asserts that the resulting status code is equal to the parameter
+        /// status.  Returns a task that will produce the score of the word.
+        /// </summary>
         private async Task<int> PlayWord(String player, String game, String word, HttpStatusCode status)
         {
             dynamic play = new ExpandoObject();
@@ -199,6 +236,9 @@ namespace ServerGrader
             JoinGame("hello", 1, Forbidden).Wait();
             String player1 = MakeUser("Player 1", Created).Result;
             String player2 = MakeUser("Player 2", Created).Result;
+            JoinGame(player1, 4, Forbidden).Wait();
+            JoinGame(player1, 121, Forbidden).Wait();
+
             String game1 = JoinGame(player1, 10, Accepted).Result;
             JoinGame(player1, 10, Conflict).Wait();
             String game2 = JoinGame(player2, 10, Created).Result;
@@ -234,7 +274,7 @@ namespace ServerGrader
         }
 
         /// <summary>
-        /// Try to playing a word.
+        /// Test getting status
         /// </summary>
         [TestMethod]
         public void TestStatus1()
@@ -268,11 +308,12 @@ namespace ServerGrader
             String player2 = MakeUser("Player 2", Created).Result;
             String player3 = MakeUser("Player 3", Created).Result;
             String game1 = JoinGame(player1, 10, Accepted).Result;
-            PlayWord(player1, game1, "a", Forbidden).Wait();
+            PlayWord(player1, game1, "a", Conflict).Wait();
             String game2 = JoinGame(player2, 30, Created).Result;
             Assert.AreEqual(game1, game2);
 
             PlayWord(player1, game1, null, Forbidden).Wait();
+            PlayWord(player1, game1, "  ", Forbidden).Wait();
             PlayWord(null, game1, "a", Forbidden).Wait();
             PlayWord("blank", game1, "a", Forbidden).Wait();
             PlayWord(player3, game1, "a", Forbidden).Wait();
@@ -294,16 +335,20 @@ namespace ServerGrader
         [TestMethod]
         public void TestPlayWord2()
         {
+            // Time limit of game in seconds
+            int LIMIT = 30;
+
             String player1 = MakeUser("Player 1", Created).Result;
             String player2 = MakeUser("Player 2", Created).Result;
             String player3 = MakeUser("Player 3", Created).Result;
-            String game1 = JoinGame(player1, 30, Accepted).Result;
-            String game2 = JoinGame(player2, 30, Created).Result;
+            String game1 = JoinGame(player1, LIMIT, Accepted).Result;
+            String game2 = JoinGame(player2, LIMIT, Created).Result;
             Assert.AreEqual(game1, game2);
 
             string board = GetStatus(game1, "no", OK).Result.Board;
 
-            int limit = 30;
+            // Play up to LIMIT words
+            int limit = LIMIT;
             foreach (string word in AllValidWords(board))
             {
                 if (limit-- == 0) break;
@@ -316,6 +361,9 @@ namespace ServerGrader
             }
         }
 
+        /// <summary>
+        /// Gets the status and asserts that it is as described in the parameters.
+        /// </summary>
         private void CheckStatus(string game, string state, string brief, string p1, string p2, string n1, string n2, string b,
                                  List<string> w1, List<string> w2, List<int> s1, List<int> s2, int timeLimit)
         {
@@ -407,6 +455,8 @@ namespace ServerGrader
         [TestMethod]
         public void TestPlayWord3()
         {
+            // Play for LIMIT seconds
+            int LIMIT = 30;
             var words1 = new List<string>();
             var words2 = new List<string>();
             var scores1 = new List<int>();
@@ -414,16 +464,18 @@ namespace ServerGrader
 
             String player1 = MakeUser("Player 1", Created).Result;
             String player2 = MakeUser("Player 2", Created).Result;
-            String game1 = JoinGame(player1, 30, Accepted).Result;
+            String game1 = JoinGame(player1, LIMIT, Accepted).Result;
             CheckStatus(game1, "pending", "no", player1, "", "", "", "", words1, words2, scores1, scores2, 0);
-            String game2 = JoinGame(player2, 30, Created).Result;
+            String game2 = JoinGame(player2, LIMIT, Created).Result;
             Assert.AreEqual(game1, game2);
+
+            DateTime startTime = DateTime.Now;
 
             string board = GetStatus(game1, "no", OK).Result.Board;
 
             CheckStatus(game1, "active", "no", player1, player2, "Player 1", "Player 2", board, words1, words2, scores1, scores2, 30);
 
-            int limit = 30;
+            int limit = LIMIT;
             PlayWord(player1, game1, "xyzzy", OK).Wait();
             words1.Add("xyzzy");
             scores1.Add(-1);
@@ -440,10 +492,14 @@ namespace ServerGrader
                 CheckStatus(game1, "active", "yes", player1, player2, "Player 1", "Player 2", board, words1, words2, scores1, scores2, 30);
             }
 
-            Thread.Sleep(30000);
+            // Wait until the game is over before checking the final status.
+            int timeRemaining = LIMIT - (int) Math.Ceiling(DateTime.Now.Subtract(startTime).TotalSeconds);
+            Thread.Sleep((timeRemaining + 2)*1000);
 
             CheckStatus(game1, "completed", "no", player1, player2, "Player 1", "Player 2", board, words1, words2, scores1, scores2, 30);
             CheckStatus(game1, "completed", "yes", player1, player2, "Player 1", "Player 2", board, words1, words2, scores1, scores2, 30);
+            PlayWord(player1, game1, "a", Conflict).Wait();
+            PlayWord(player1, game1, "b", Conflict).Wait();
         }
 
         /// <summary>
@@ -467,6 +523,9 @@ namespace ServerGrader
 
         }
 
+        /// <summary>
+        /// Helper for checking that times are reported semi-accurately.
+        /// </summary>
         private void TimerTester (string game1, int limit)
         {
             while (limit >= 0)

@@ -300,7 +300,7 @@ namespace Boggle
                 try
                 {
                     // Get information about the game in which the word is to be played
-                    SqlCommand command = new SqlCommand("select GameID, Player1, Player2, Board, TimeLimit, StartTime from Games where GameID=@GameID and Player2 is not null and (Player1 = @Player or Player2 = @Player)", conn, trans);
+                    SqlCommand command = new SqlCommand("select GameID, Player1, Player2, Board, TimeLimit, StartTime from Games where GameID=@GameID and (Player1 = @Player or Player2 = @Player)", conn, trans);
                     command.Parameters.AddWithValue("@GameID", gameID);
                     command.Parameters.AddWithValue("@Player", data.UserToken);
 
@@ -314,9 +314,19 @@ namespace Boggle
                         if (reader.Read())
                         {
                             //player = (string)(((string)reader["Player1"] == data.UserToken) ? reader["Player1"] : reader["Player2"]);
+                            if (reader["Player2"] is DBNull)
+                            {
+                                SetStatus(Conflict);
+                                return null;
+                            }
                             board = (string)reader["Board"];
                             timeLimit = (int)reader["TimeLimit"];
                             startTime = (DateTime)reader["StartTime"];
+                            if (reader["Player2"] is DBNull)
+                            {
+                                SetStatus(Conflict);
+                                return null;
+                            }
                         }
                         else
                         {

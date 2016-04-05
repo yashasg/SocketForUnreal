@@ -147,6 +147,7 @@
   <ItemGroup />
   <ItemGroup>
     <Content Include="packages.config" />
+    <None Include="Properties\PublishProfiles\BoggleCS3500S16 %282%29.pubxml" />
     <None Include="Properties\PublishProfiles\BoggleCS3500S16%28CS3500-S16-Boggle%29.pubxml" />
     <None Include="Properties\PublishProfiles\BoggleCS3500S16.pubxml" />
     <None Include="Web.Debug.config">

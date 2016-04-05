@@ -113,10 +113,16 @@ namespace Boggle
         {
             lock (sync)
             {
-                if (gameID == null || data.UserToken == null || !users.ContainsKey(data.UserToken) || !games.ContainsKey(gameID)
-                    || data.Word == null || data.Word.Trim().Length == 0)
+                if (gameID == null || data.UserToken == null || !users.ContainsKey(data.UserToken) || 
+                    (!games.ContainsKey(gameID) && gameID != pendingGame) || data.Word == null || data.Word.Trim().Length == 0)
                 {
                     SetStatus(Forbidden);
+                    return null;
+                }
+
+                if (gameID == pendingGame)
+                {
+                    SetStatus(Conflict);
                     return null;
                 }
 
