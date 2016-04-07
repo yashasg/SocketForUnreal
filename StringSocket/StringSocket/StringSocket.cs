@@ -54,19 +54,29 @@ namespace CustomNetworking
 
     public class StringSocket
     {
-        // These delegates describe the callbacks that are used for sending and receiving strings.
+        /// <summary>
+        /// The type of delegate that is called when a send has completed.
+        /// </summary>
         public delegate void SendCallback(Exception e, object payload);
-        public delegate void ReceiveCallback(String s, Exception e, object payload);
 
-        // Contains information about a single send request
+        /// <summary>
+        /// The type of delegate that is called when a receive has completed.
+        /// </summary>
+        public delegate void ReceiveCallback(String s, Exception e, object payload);
+       
+        /// <summary>
+        /// Contains information about a single queued send request
+        /// </summary>
         private struct SendRequest
         {
             public string Text { get; set; }
             public SendCallback Callback { get; set; }
             public object Payload { get; set; }
         }
-
-        // Contains information about a single receive request
+     
+        /// <summary>
+        /// Contains information about a singe queued receive request.
+        /// </summary>
         private struct ReceiveRequest
         {
             public ReceiveCallback Callback { get; set; }
@@ -105,9 +115,9 @@ namespace CustomNetworking
 
 
         /// <summary>
-        /// Creates a LineSocket from a regular Socket, which should already be connected.  
+        /// Creates a StringSocket from a regular Socket, which should already be connected.  
         /// The read and write methods of the regular Socket must not be called after the
-        /// LineSocket is created.  Otherwise, the LineSocket will not behave properly.  
+        /// StringSocket is created.  Otherwise, the StringSocket will not behave properly.  
         /// The encoding to use to convert between raw bytes and strings is also provided.
         /// </summary>
         public StringSocket(Socket s, Encoding e)
@@ -123,6 +133,20 @@ namespace CustomNetworking
             receivedLines = new Queue<string>();
         }
 
+        /// <summary>
+        /// Shuts down and closes the socket.
+        /// </summary>
+        public void Shutdown  ()
+        {
+            try
+            {
+                socket.Shutdown(SocketShutdown.Both);
+                socket.Close();
+            }
+            catch (Exception)
+            {
+            }
+        }
 
         /// <summary>
         /// We can write a string to a StringSocket ss by doing
@@ -233,9 +257,7 @@ namespace CustomNetworking
                     ProcessSendQueue();
                 }
             }
-
         }
-
 
         /// <summary>
         /// We can read a string from the StringSocket by doing
@@ -290,12 +312,38 @@ namespace CustomNetworking
         {
             lock (receiveRequests)
             {
-                // For each complete line of text, invoke the corresponding callback.
-                while (receivedLines.Count() > 0 && receiveRequests.Count() > 0)
+                // While there is sufficient text, service the callbacks.
+                while (receiveRequests.Count() > 0)
                 {
-                    String line = receivedLines.Dequeue();
-                    ReceiveRequest req = receiveRequests.Dequeue();
-                    ThreadPool.QueueUserWorkItem(x => req.Callback(line, null, req.Payload));
+                    // Deal with a line request
+                    if (receiveRequests.Peek().Length <= 0)
+                    {
+                        if (receivedLines.Count > 0)
+                        {
+                            String line = receivedLines.Dequeue();
+                            ReceiveRequest req = receiveRequests.Dequeue();
+                            ThreadPool.QueueUserWorkItem(x => req.Callback(line, null, req.Payload));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }   
+                    
+                    // Deal with a character request
+                    else
+                    {
+                        string chunk = ExtractChunk(receiveRequests.Peek().Length);
+                        if (chunk != null)
+                        {
+                            ReceiveRequest req = receiveRequests.Dequeue();
+                            ThreadPool.QueueUserWorkItem(x => req.Callback(chunk, null, req.Payload));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }        
                 }
 
                 // If any unserviced requests remain, request more bytes.
@@ -314,6 +362,47 @@ namespace CustomNetworking
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Extracts a string of the specified length from the queued lines plus the incomplete line.
+        /// </summary>
+        private string ExtractChunk (int length)
+        {
+            int size = 0;
+            foreach (string line in receivedLines)
+            {
+                size += line.Length + 1;
+                if (size >= length) break;
+            }
+
+            if (size + incompleteLine.Length < length)
+            {
+                return null;
+            }
+
+            string chunk = "";
+            while (receivedLines.Count > 0)
+            {
+                string line = receivedLines.Dequeue();
+                if (chunk.Length + line.Length+1 <= length)
+                {
+                    chunk += line + '\n';
+                }
+                else
+                {
+                    int needed = length - chunk.Length;
+                    chunk += line.Substring(0, needed);
+                    receivedLines.Enqueue(line.Substring(needed));
+                }
+
+                if (chunk.Length == length) return chunk;
+            }
+
+            int needs = length - chunk.Length;
+            chunk += incompleteLine.Substring(0, needs);
+            incompleteLine = incompleteLine.Substring(needs);
+            return chunk;
         }
 
         /// <summary>
