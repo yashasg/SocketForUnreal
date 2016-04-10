@@ -31,8 +31,8 @@ namespace ServerGrader
         private static HttpClient CreateClient()
         {
             HttpClient client = new HttpClient();
-            //client.BaseAddress = new Uri("http://localhost:60000");
-            client.BaseAddress = new Uri("http://bogglecs3500s16db.azurewebsites.net");
+            client.BaseAddress = new Uri("http://localhost:60000");
+            //client.BaseAddress = new Uri("http://bogglecs3500s16db.azurewebsites.net");
             return client;
         }
 
