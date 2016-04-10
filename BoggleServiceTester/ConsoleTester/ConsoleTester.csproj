@@ -54,10 +54,6 @@
       <Project>{eeddf642-44a1-4847-aeaa-2e05d52cb459}</Project>
       <Name>DataModels</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Grader\Grader.csproj">
-      <Project>{368fff66-e819-48d5-85f9-f239685e169e}</Project>
-      <Name>Grader</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

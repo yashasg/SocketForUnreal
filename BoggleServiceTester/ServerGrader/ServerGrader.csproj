@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="BoggleBoard.cs" />
     <Compile Include="GradingTests.cs" />
+    <Compile Include="Models.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

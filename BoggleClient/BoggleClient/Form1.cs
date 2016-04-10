@@ -203,7 +203,7 @@ namespace BoggleClient
         {
             if (JoinGameButton.Text.StartsWith("Cancel"))
             {
-                timer.Stop();
+                if (timer != null) timer.Stop();
                 Waiting.Visible = false;
                 RegisteredState();
                 return;

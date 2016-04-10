@@ -10,6 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Net45\Newtonsoft.Json.xml = Net45\Newtonsoft.Json.xml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleTester", "ConsoleTester\ConsoleTester.csproj", "{C34715A8-AF98-4D0D-816F-629BE4A9BD56}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataModels", "DataModels\DataModels.csproj", "{EEDDF642-44A1-4847-AEAA-2E05D52CB459}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServerGrader", "ServerGrader\ServerGrader.csproj", "{BB5EC1B9-2AA7-4AF6-B745-DD9356D2B7E0}"
 EndProject
 Global
@@ -18,6 +22,14 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C34715A8-AF98-4D0D-816F-629BE4A9BD56}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C34715A8-AF98-4D0D-816F-629BE4A9BD56}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C34715A8-AF98-4D0D-816F-629BE4A9BD56}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C34715A8-AF98-4D0D-816F-629BE4A9BD56}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEDDF642-44A1-4847-AEAA-2E05D52CB459}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEDDF642-44A1-4847-AEAA-2E05D52CB459}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEDDF642-44A1-4847-AEAA-2E05D52CB459}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEDDF642-44A1-4847-AEAA-2E05D52CB459}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BB5EC1B9-2AA7-4AF6-B745-DD9356D2B7E0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BB5EC1B9-2AA7-4AF6-B745-DD9356D2B7E0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB5EC1B9-2AA7-4AF6-B745-DD9356D2B7E0}.Release|Any CPU.ActiveCfg = Release|Any CPU
