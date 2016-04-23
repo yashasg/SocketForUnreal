@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringSocketLectureTests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StringSocketTester", "StringSocketTester\StringSocketTester.csproj", "{1D096B4C-71CB-4579-A1EE-46A9B98C730B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GradingTester", "GradingTester\GradingTester.csproj", "{CEDE31EF-BF4D-4254-A034-9CBA633DC89E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SS", "SS\SS.csproj", "{F03016CC-50B8-4483-95B3-6A10380C0B99}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{1D096B4C-71CB-4579-A1EE-46A9B98C730B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1D096B4C-71CB-4579-A1EE-46A9B98C730B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1D096B4C-71CB-4579-A1EE-46A9B98C730B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CEDE31EF-BF4D-4254-A034-9CBA633DC89E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CEDE31EF-BF4D-4254-A034-9CBA633DC89E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CEDE31EF-BF4D-4254-A034-9CBA633DC89E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CEDE31EF-BF4D-4254-A034-9CBA633DC89E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F03016CC-50B8-4483-95B3-6A10380C0B99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F03016CC-50B8-4483-95B3-6A10380C0B99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F03016CC-50B8-4483-95B3-6A10380C0B99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F03016CC-50B8-4483-95B3-6A10380C0B99}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
