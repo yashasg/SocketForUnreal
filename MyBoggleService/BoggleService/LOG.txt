@@ -1,0 +1,7 @@
+﻿Log Entry:5:17:34 PM Wednesday, March 30, 2016
+
+System.ArgumentException: Value does not fall within the expected range.
+   at Boggle.BoggleService.MakeUser(Name data) in C:\Users\zachary\Source\BogglePrivate\BoggleServiceDB\BoggleService\BoggleService.svc.cs:line 103
+   at Boggle.BoggleService.MakeUser(Name data) in C:\Users\zachary\Source\BogglePrivate\BoggleServiceDB\BoggleService\BoggleService.svc.cs:line 103
+--------------------------------------------------
+
